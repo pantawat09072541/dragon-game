@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>หนีซอมบี้ด้วยพระธรรม</title>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@500;600&family=Noto+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--night:#0d1214;--dusk:#1b2a2c;--sodium:#ffb347;--rust:#b3452c;--skin:#9db487;--ink:#eee8dc;--dim:#a9b3ac;--ok:#6fcf8a;--bad:#ef5a45;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--night);color:var(--ink);font-family:'Noto Sans Thai',sans-serif}
+body{display:flex;flex-direction:column}
+h1,h2,.mitr{font-family:'Mitr','Noto Sans Thai',sans-serif;font-weight:600;margin:0}
+.screen{display:none;flex:1;min-height:0}
+.screen.on{display:flex}
+button{font:inherit;cursor:pointer;color:inherit}
+button:focus-visible{outline:2px solid var(--sodium);outline-offset:2px}
+.btn{font-family:'Mitr',sans-serif;font-size:19px;padding:13px 34px;border-radius:999px;border:0;background:var(--sodium);color:#241505;box-shadow:0 0 28px #ffb34755}
+.btn:hover{background:#ffc470}
+.card{margin:auto;max-width:560px;padding:28px 22px;text-align:center}
+#home{background:radial-gradient(ellipse at 50% 100%,#ffb34733,transparent 60%),linear-gradient(#141c1e,#0d1214)}
+#home h1{font-size:clamp(34px,8vw,58px);line-height:1.2;margin-bottom:6px}
+#home .lead{color:var(--dim);margin:0 0 22px}
+.rules{text-align:left;list-style:none;padding:0;margin:0 0 26px;display:grid;gap:9px;font-size:15px;line-height:1.6}
+.rules li{padding:10px 14px;border-left:3px solid var(--sodium);background:#ffffff08;border-radius:0 8px 8px 0}
+#game{flex-direction:column}
+.hud{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px 4px;font-size:14px}
+.hud .stg{font-family:'Mitr';font-size:16px}
+.gap{font-family:'Mitr';padding:3px 12px;border-radius:999px;background:#ffffff14}
+.gap.danger{background:var(--bad);color:#fff}
+.mini{position:relative;height:8px;margin:6px 14px 0;border-radius:4px;background:#ffffff18}
+.mini i{position:absolute;top:-4px;width:14px;height:16px;border-radius:50%;transform:translateX(-50%);transition:left .5s}
+.mini .r{background:var(--sodium)}.mini .z{background:var(--skin);box-shadow:0 0 0 2px var(--rust)}
+.mini b{position:absolute;right:-4px;top:-9px;font-size:16px}
+.scene{position:relative;flex:1;min-height:170px;overflow:hidden;background:linear-gradient(#26383a 0%,#16211f 62%,#0d1214 62%)}
+.scene.late{background:linear-gradient(#3a2320 0%,#1d1413 62%,#0d1214 62%)}
+.road{position:absolute;left:0;right:0;bottom:0;height:24%;background:#171b1c;border-top:3px solid #2d3436}
+.dash{position:absolute;left:0;right:0;bottom:11%;height:4px;background:repeating-linear-gradient(90deg,#d9cfa8 0 38px,transparent 38px 90px);opacity:.5;transition:background-position .6s}
+.lamp{position:absolute;bottom:24%;width:6px;height:46%;background:#2a3234;left:8%}
+.lamp:after{content:"";position:absolute;top:-6px;left:-14px;width:32px;height:10px;border-radius:6px;background:var(--sodium);box-shadow:0 0 50px 22px #ffb34744}
+.actor{position:absolute;bottom:13%;transform:translateX(-50%)}
+.actor svg{height:100%;width:auto;display:block}
+#runner{left:68%;height:52%;transition:left .5s}
+#zombie{transition:left .6s cubic-bezier(.3,1.4,.5,1)}
+#runner svg{animation:bob .45s infinite alternate ease-in-out}
+#zombie svg{animation:sway 1s infinite alternate ease-in-out;transform-origin:50% 100%}
+@keyframes bob{to{transform:translateY(-6px)}}
+@keyframes sway{to{transform:rotate(3deg)}}
+.house{position:absolute;bottom:22%;font-size:0;transform:translateX(-50%);transition:left .6s}
+.house svg{width:min(26vw,150px);filter:drop-shadow(0 0 30px #ffb347aa)}
+.hit{animation:hit .4s}
+@keyframes hit{30%{filter:drop-shadow(0 0 18px #ef5a45) brightness(1.6)}}
+.panel{padding:14px 16px 16px;background:#10181a;border-top:1px solid #ffb34744;max-height:56%;overflow:auto}
+.qm{display:flex;justify-content:space-between;color:var(--dim);font-size:12px;margin-bottom:6px}
+.q{font-size:16px;line-height:1.7;margin:0 0 12px;font-weight:500;max-width:70ch}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+@media(max-width:640px){.opts{grid-template-columns:1fr}}
+.opt{text-align:left;padding:11px 13px;border-radius:8px;background:#ffffff08;border:1px solid #ffffff22;font-size:14px;line-height:1.5}
+.opt:hover:not(:disabled){border-color:var(--sodium);background:#ffb34714}
+.opt b{color:var(--sodium);margin-right:6px}
+.opt.ok{border-color:var(--ok);background:#6fcf8a22}
+.opt.no{border-color:var(--bad);background:#ef5a4527}
+.fb{min-height:20px;margin-top:9px;font-size:13px}
+#intro .card,#end .card{background:#0d1214e8}
+#intro,#end{background:#0d1214}
+#intro .prev{height:150px;margin:0 auto 14px}
+#intro .prev svg{height:100%}
+#intro p,#end p{color:var(--dim);line-height:1.8;margin:10px 0 22px}
+#intro h2,#end h2{font-size:clamp(26px,6vw,38px)}
+.tag{color:var(--sodium);font-family:'Mitr';font-size:14px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<section id="home" class="screen on"><div class="card">
+  <h1>หนีซอมบี้<br>ด้วยพระธรรม</h1>
+  <p class="lead">ฝูงซอมบี้กำลังไล่ตาม ความรู้เรื่องพระธรรมคือแรงที่ทำให้คุณวิ่งต่อไปได้</p>
+  <ul class="rules">
+    <li>เริ่มเกม คุณกับซอมบี้ห่างกัน 2 ก้าว ตอบคำถามได้ไม่จำกัดเวลา</li>
+    <li>ตอบถูก คุณวิ่งหนีไปอีก 1 ก้าว ตอบผิด ซอมบี้เข้าใกล้ 1 ก้าว และคำถามนั้นจะวนกลับมาให้ตอบใหม่</li>
+    <li>ต้องตอบถูกครบทุกข้อของด่านจึงไปด่านถัดไป ทั้งหมด 4 ด่าน ซอมบี้ใหญ่ขึ้นเรื่อยๆ</li>
+    <li>ถึงฐานหลบภัยหลังด่านที่ 4 คุณชนะ แต่ถ้าซอมบี้ถึงตัวคุณก่อน คุณแพ้</li>
+  </ul>
+  <button class="btn" id="go">เริ่มเกม</button>
+</div></section>
+
+<section id="intro" class="screen"><div class="card">
+  <div class="tag" id="itag"></div><h2 id="iname"></h2>
+  <div class="prev" id="iprev"></div><p id="ihint"></p>
+  <button class="btn" id="enter">เริ่มวิ่ง</button>
+</div></section>
+
+<section id="game" class="screen">
+  <div class="hud"><span class="stg" id="stg"></span><span id="clr"></span><span class="gap" id="gap"></span></div>
+  <div class="mini"><i class="r" id="mr"></i><i class="z" id="mz"></i><b>🏠</b></div>
+  <div class="scene" id="scene">
+    <div class="lamp"></div><div class="road"></div><div class="dash" id="dash"></div>
+    <div class="house" id="house"></div>
+    <div class="actor" id="zombie"></div>
+    <div class="actor" id="runner"></div>
+  </div>
+  <div class="panel">
+    <div class="qm"><span id="qn"></span><span id="qp"></span></div>
+    <p class="q" id="qt"></p><div class="opts" id="opts"></div><div class="fb" id="fb"></div>
+  </div>
+</section>
+
+<section id="end" class="screen"><div class="card">
+  <h2 id="etitle"></h2><p id="edesc"></p><button class="btn" id="again">เล่นใหม่</button>
+</div></section>
+
+<script>
+const L=['ก','ข','ค','ง'];
+const Q=(p,q,o,c)=>({p,q,o,c});
+const STAGES=[
+{name:'มือใหม่หัดหนี',h:130,s:.62,hint:'ซอมบี้เด็กตัวเล็กเดินตามมาช้าๆ แต่ถ้าชะล่าใจก็ถูกจับได้เหมือนกัน',qs:[
+Q('๕๑','อริยสัจ 4 ตามเนื้อหา หมายถึงข้อใด',['หลักปฏิบัติที่เน้นการบำเพ็ญทางกายเพื่อหลุดพ้น','หลักความจริงที่เป็นธรรมชาติของชีวิต แสดงความสัมพันธ์ระหว่างเหตุและผล','ข้อห้ามทางศาสนาที่ผู้นับถือต้องปฏิบัติตาม','หลักการอธิบายการกำเนิดของโลกและจักรวาล'],1),
+Q('๕๑','อริยสัจ 4 มีกี่ประการ',['2 ประการ','3 ประการ','4 ประการ','5 ประการ'],2),
+Q('๕๑','นักเรียนคนใดเข้าใจลักษณะของอริยสัจ 4 ได้ถูกต้องที่สุด',['สมใจ บอกว่า อริยสัจ 4 อธิบายเหตุและผลของปัญหาชีวิต','สมศรี บอกว่า อริยสัจ 4 เป็นเรื่องของโชคชะตาที่เปลี่ยนแปลงไม่ได้','สมชาย บอกว่า อริยสัจ 4 ใช้ได้เฉพาะพระสงฆ์เท่านั้น','สมหมาย บอกว่า อริยสัจ 4 เป็นเพียงความเชื่อส่วนบุคคลที่ไม่เกี่ยวกับความจริงของชีวิต'],0),
+Q('๕๑','อริยสัจ 4 ประกอบด้วยหลักธรรมข้อใดบ้าง?',['ทุกข์ สมุทัย นิโรธ มรรค','ศีล สมาธิ ปัญญา เมตตา','ทาน ศีล ภาวนา ขันติ','อนิจจัง ทุกขัง อนัตตา นิพพาน'],0),
+Q('๕๑','"ทุกข์" ในอริยสัจ 4 หมายถึงข้อใด',['ความเจ็บป่วยทางร่างกายที่เกิดขึ้นเฉพาะเมื่อเป็นโรคร้ายแรงเท่านั้น','ความเสียใจที่เกิดขึ้นเฉพาะกับผู้ที่ขาดแคลนทรัพย์สินเงินทอง','ความไม่สบายใจที่เกิดเฉพาะเมื่อประสบเหตุร้ายแรงในชีวิตเท่านั้น','ปัญหาของชีวิตที่เกิดได้ทั้งทางกายและทางใจกับทุกคน'],3)]},
+{name:'ทางหนีเริ่มตึง',h:175,s:.8,hint:'ซอมบี้ตัวใหญ่ขึ้นและก้าวยาวขึ้น ด่านนี้ว่าด้วยขันธ์ 5',qs:[
+Q('๕๑','ขันธ์ 5 หมายถึงข้อใด',['ส่วนประกอบของชีวิต 5 ประการ','หลักปฏิบัติ 5 ข้อสำหรับพุทธศาสนิกชนทั่วไป','อวัยวะสำคัญ 5 ส่วนของร่างกายมนุษย์','ทางรับรู้ 5 ทางของมนุษย์ผ่านประสาทสัมผัส'],0),
+Q('๕๑','ข้อใดเรียงลำดับขันธ์ 5 ได้ครบถ้วนถูกต้อง',['รูป เวทนา สัญญา จิต วิญญาณ','รูป เวทนา สัญญา สังขาร วิญญาณ','ธาตุ เวทนา สัญญา สังขาร วิญญาณ','รูป เจตสิก สัญญา สังขาร วิญญาณ'],1),
+Q('๕๑','"รูป" ในขันธ์ 5 ได้แก่ข้อใด',['ความรู้สึกสุข ทุกข์ หรือเฉยๆ ที่เกิดจากการรับสิ่งต่างๆ','การรับรู้ผ่านทางตา หู จมูก ลิ้น กาย และใจ','ร่างกายและพฤติกรรมอันเป็นวัตถุธาตุ 4','สิ่งที่ปรุงแต่งจิตให้ทำสิ่งต่างๆ ทั้งดีและไม่ดี'],2),
+Q('๕๑','ธาตุ 4 ที่เป็นส่วนประกอบของรูป ได้แก่ข้อใด',['ธาตุดิน ธาตุน้ำ ธาตุไฟ ธาตุอากาศ','ธาตุดิน ธาตุทอง ธาตุไฟ ธาตุลม','ธาตุน้ำ ธาตุไฟ ธาตุลม ธาตุไม้','ธาตุดิน ธาตุน้ำ ธาตุไฟ ธาตุลม'],3),
+Q('๕๑','ผู้ป่วยมีไข้สูง ร่างกายร้อนผ่าวผิดปกติ อาการนี้สัมพันธ์กับธาตุใดมากที่สุด',['ธาตุดิน','ธาตุไฟ','ธาตุน้ำ','ธาตุลม'],1),
+Q('๕๑','เวทนา ในขันธ์ 5 มีความหมายสอดคล้องกับข้อใดมากที่สุด?',['การรับรู้สิ่งต่าง ๆ ผ่านทางตา หู จมูก ลิ้น และกาย','ความรู้สึกสุข ทุกข์ หรือเฉย ๆ ที่เกิดขึ้นเมื่อได้รับสิ่งกระทบ','การจดจำสิ่งต่าง ๆ ที่เคยพบเห็นหรือประสบมา','การคิดปรุงแต่งและการแสดงออกทางจิตใจ'],1),
+Q('','สัญญาขันธ์ หมายถึงข้อใด',['ความรู้สึกที่เกิดขึ้นในจิตใจ','ส่วนประกอบที่เป็นร่างกาย','การรับรู้ผ่านประสาทสัมผัส','การจดจำหรือหมายรู้สิ่งต่าง ๆ'],3),
+Q('','สังขารขันธ์ หมายถึงข้อใด',['การรับรู้ทางตา หู จมูก และลิ้น','การคิดปรุงแต่งทางจิตใจและความตั้งใจ','ส่วนประกอบของร่างกายและวัตถุ','ความรู้สึกสุข ทุกข์ หรือเฉย ๆ'],1),
+Q('','วิญญาณขันธ์ หมายถึงข้อใด',['การจดจำเรื่องราวในอดีต','ความรู้สึกสุขหรือทุกข์','การคิดปรุงแต่งทางจิตใจ','การรับรู้ผ่านทางประสาทสัมผัสและใจ'],3),
+Q('','การได้ยินเสียงเพลงผ่านทางหู เกี่ยวข้องกับวิญญาณประเภทใด',['โสตวิญญาณ','จักขุวิญญาณ','ฆานวิญญาณ','ชิวหาวิญญาณ'],0),
+Q('','หากนักเรียนเห็นภาพสถานที่แห่งหนึ่งแล้วจำได้ว่าเคยไปที่นั่นมาก่อน เป็นการทำงานของขันธ์ใด',['สัญญาขันธ์','รูปขันธ์','เวทนาขันธ์','วิญญาณขันธ์'],0)]},
+{name:'นักเอาชีวิตรอด',h:225,s:1,hint:'ซอมบี้ตัวโตกว่าเดิมอีก ด่านนี้ว่าด้วยโลกธรรม 8',qs:[
+Q('๕๒','โลกธรรม 8 หมายถึงข้อใด',['หลักธรรมที่ผู้ปฏิบัติแล้วจะพ้นจากโลก','ธรรมะ 8 ข้อที่พระสงฆ์ต้องปฏิบัติ','ธรรมะของผู้ครองเรือนทั้ง 8 ประการ','ธรรมดาของโลกหรือสิ่งที่มีอยู่ประจำโลก ซึ่งมีผลกระทบต่อความรู้สึกและการรับรู้ของมนุษย์'],3),
+Q('๕๒','โลกธรรม 8 แบ่งออกเป็นกี่คู่',['4 คู่','3 คู่','2 คู่','8 คู่'],0),
+Q('๕๒','ข้อใดเป็นคู่ของโลกธรรม 8 ที่ถูกต้อง',['ได้ลาภ – เสื่อมยศ','ได้ยศ – เสื่อมลาภ','สรรเสริญ – นินทา','สุข – ได้ลาภ'],2),
+Q('๕๒','"ลาภ" ตามเนื้อหา หมายถึงข้อใด',['ตำแหน่งหน้าที่ที่สูงขึ้น','ทรัพย์สินเงินทองหรือผลประโยชน์ที่เกิดขึ้น','คำชื่นชมจากผู้อื่น','ความสบายใจที่ได้รับ'],1),
+Q('๕๒','คุณสมศักดิ์ได้เลื่อนตำแหน่งเป็นผู้อำนวยการ แต่ต่อมาถูกปลดออกจากตำแหน่ง เหตุการณ์นี้ตรงกับโลกธรรม 8 คู่ใด',['ได้ยศ – เสื่อมยศ','ได้ลาภ – เสื่อมลาภ','สรรเสริญ – นินทา','สุข – ทุกข์'],0),
+Q('๕๒','เมื่อถูกสรรเสริญและถูกนินทา ควรปฏิบัติตนอย่างไรตามเนื้อหา',['ดีใจเต็มที่เมื่อถูกสรรเสริญ และโต้ตอบทันทีเมื่อถูกนินทา','ไม่สนใจทุกคำพูดของผู้อื่นโดยสิ้นเชิง','พยายามทำให้ทุกคนสรรเสริญตนตลอดเวลา','มีสติเตือนตน ไม่หลงระเริงเมื่อถูกสรรเสริญ และไม่ช้ำใจเมื่อถูกนินทา'],3),
+Q('๕๒','นางสาวมินตราเพิ่งมีความสุขกับการได้รับรางวัล เธอควรคิดตามแนวโลกธรรม 8 อย่างไร',['ความสุขจะอยู่กับเธอตลอดไปไม่เปลี่ยนแปลง','เมื่อมีความสุขควรตระหนักว่า หากหมดความสุขแล้วความทุกข์ก็อาจตามมา','ความทุกข์จะไม่เกิดขึ้นกับคนที่ทำดี','ควรเก็บความสุขไว้คนเดียวเพื่อไม่ให้ใครอิจฉา'],1),
+Q('๕๒','ข้อใดแสดงความเข้าใจโลกธรรม 8 ได้ถูกต้องที่สุด',['เป็นสิ่งที่เกิดเฉพาะกับผู้มีฐานะดี','เป็นสิ่งที่เลือกได้ว่าจะรับเฉพาะด้านดีหรือไม่','เป็นธรรมดาของโลกที่ทุกคนต้องประสบ ทั้งด้านบวกและด้านลบ','เป็นสิ่งที่เกิดขึ้นเพราะโชคเท่านั้น'],2)]},
+{name:'ราชาซอมบี้',h:280,s:1.25,king:1,hint:'ราชาซอมบี้ตัวใหญ่และน่ากลัวที่สุด ฐานหลบภัยอยู่ข้างหน้านี้เอง ด่านนี้ว่าด้วยจิตและเจตสิก',qs:[
+Q('๕๒','"จิต" ตามเนื้อหา หมายถึงข้อใด',['ธรรมชาติที่สร้างสรรค์สิ่งต่างๆ ด้วยการคิด','อวัยวะภายในร่างกายที่ทำหน้าที่คิดและจดจำเรื่องราวต่างๆ','ความรู้สึกที่เกิดจากการสัมผัสสิ่งต่างๆ ทางร่างกาย','ร่างกายส่วนที่เป็นศูนย์กลางของการรับรู้และสั่งการ'],0),
+Q('๕๒','นักเรียนนั่งอยู่ในห้องเรียน แต่ใจกลับคิดถึงบ้านที่อยู่ไกลออกไป ตรงกับธรรมชาติของจิตข้อใด',['เที่ยวไปดวงเดียว','ไปได้ไกล','ไม่มีสรีระ','มีถ้ำเป็นที่อาศัย'],1),
+Q('๕๒','ข้อใดอธิบาย "เที่ยวไปดวงเดียว" ได้ถูกต้อง',['จิตมีได้เพียงดวงเดียวตลอดชีวิตและไม่เปลี่ยนแปลง','จิตสามารถคิดอะไรได้พร้อมกันหลายอย่างอย่างแท้จริง','จิตไม่สามารถเคลื่อนที่ไปไหนได้เลยนอกจากอยู่กับที่','คิดได้ทีละอย่าง แต่เร็วจนเหมือนพร้อมกัน'],3),
+Q('๕๒','"ไม่มีสรีระ" ซึ่งเป็นธรรมชาติของจิต หมายความว่าอย่างไร',['จิตมีรูปร่างหน้าตาเหมือนร่างกายมนุษย์ทุกประการ','จิตเป็นวัตถุที่มองเห็นได้ด้วยตาเปล่าทุกคน','ไม่มีตัวตน เป็นนามธรรม วัดด้วยเครื่องมือไม่ได้','จิตอยู่ในร่างกายเฉพาะส่วนศีรษะเท่านั้น'],2),
+Q('๕๒','"มีถ้ำเป็นที่อาศัย" ซึ่งเป็นธรรมชาติของจิต คำว่า "ถ้ำ" หมายถึงสิ่งใด',['ร่างกาย','ถ้ำตามธรรมชาติในป่า','ศีรษะเท่านั้น','หัวใจเท่านั้น'],0),
+Q('๕๒','ข้อใดอธิบาย "เจตสิก" ได้ถูกต้อง',['สิ่งที่อยู่นอกจิต เกิดทีหลังจิตและดับก่อนจิต มีอารมณ์ต่างจากจิต','สิ่งที่เกิดพร้อมจิต ดับพร้อมจิต และมีอารมณ์เดียวกับจิต','สิ่งที่แยกจากจิตโดยสิ้นเชิง ไม่มีความเกี่ยวข้องกับจิตแต่อย่างใด','ร่างกายส่วนที่เป็นที่อาศัยของจิตและทำหน้าที่ปรุงแต่งจิต'],1),
+Q('๕๒','เมื่อ "ความโกรธ" เข้าประกอบกับจิต จะทำให้จิตมีอาการอย่างไร',['สงบเย็น เบิกบาน ผ่องใสเหมือนน้ำนิ่งในสระ','เฉยเมย ไม่รู้สึกอะไรกับสิ่งที่มากระทบเลย','ลืมเรื่องราวทุกอย่างและไม่สามารถจดจำอะไรได้','ขัดเคือง เคียดแค้น เหมือนน้ำเดือด'],3)]}
+];
+const TOTAL=STAGES.reduce((a,s)=>a+s.qs.length,0), START_GAP=2, SAFE=START_GAP+TOTAL;
+const $=id=>document.getElementById(id);
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const prep=q=>{const ix=shuf([0,1,2,3]);return{p:q.p,q:q.q,o:ix.map(i=>q.o[i]),c:ix.indexOf(q.c)}};
+
+function runnerSVG(){return `<svg viewBox="0 0 100 180"><rect x="26" y="52" width="22" height="46" rx="8" fill="#6b4a2b"/><circle cx="58" cy="26" r="15" fill="#e2b48c"/><path d="M43 22q14-18 30-2l-4 6q-12-8-24 2z" fill="#2b2118"/><rect x="42" y="42" width="32" height="56" rx="12" fill="#3b6a86"/><path d="M70 56l24 14" stroke="#e2b48c" stroke-width="9" stroke-linecap="round"/><path d="M46 60l-18 22" stroke="#e2b48c" stroke-width="9" stroke-linecap="round"/><path d="M52 96l-22 38l-8 36" stroke="#2a2f3a" stroke-width="13" stroke-linecap="round" fill="none"/><path d="M64 96l26 26l16 22" stroke="#2a2f3a" stroke-width="13" stroke-linecap="round" fill="none" transform="translate(-14 4)"/><circle cx="63" cy="25" r="2" fill="#222"/></svg>`}
+function zombieSVG(king){const eye=king?'#ff4a2e':'#f4f0b0';return `<svg viewBox="0 0 130 200">${king?'<path d="M40 34l6-22 12 14 7-18 7 18 12-14 6 22z" fill="#e8b93a"/>':''}<circle cx="64" cy="52" r="20" fill="#9db487"/><circle cx="57" cy="48" r="5" fill="${eye}"/><circle cx="73" cy="48" r="4" fill="${eye}"/><path d="M52 62q12 8 24-2" stroke="#2a1410" stroke-width="3" fill="none"/><rect x="40" y="72" width="48" height="66" rx="12" fill="#4a3f3a"/><path d="M44 122l6 16 6-12 6 14 8-12 8 12 6-14 6 12 6-16z" fill="#2c2623"/><path d="M84 84l40 4M84 98l38 10" stroke="#9db487" stroke-width="10" stroke-linecap="round"/><path d="M52 138l-10 54M76 138l16 54" stroke="#3a3f4a" stroke-width="15" stroke-linecap="round"/></svg>`}
+const HOUSE=`<svg viewBox="0 0 120 100"><path d="M10 48L60 8l50 40z" fill="#7a3a2a"/><rect x="20" y="48" width="80" height="48" fill="#3a2c26"/><rect x="48" y="62" width="24" height="34" fill="#ffb347"/><rect x="26" y="58" width="16" height="16" fill="#ffd27a"/><rect x="78" y="58" width="16" height="16" fill="#ffd27a"/></svg>`;
+
+let S;
+function show(id){document.querySelectorAll('.screen').forEach(e=>e.classList.remove('on'));$(id).classList.add('on')}
+function newGame(){S={st:0,right:0,wrong:0,queue:[],cleared:0,lock:false};intro()}
+function intro(){const g=STAGES[S.st];$('itag').textContent=`ด่านที่ ${S.st+1} จาก ${STAGES.length}`;$('iname').textContent=g.name;$('ihint').textContent=g.hint;
+ $('iprev').innerHTML=zombieSVG(g.king);$('iprev').style.height=(70+g.s*70)+'px';show('intro')}
+function enter(){const g=STAGES[S.st];S.queue=shuf(g.qs).map(prep);S.cleared=0;
+ $('zombie').innerHTML=zombieSVG(g.king);$('zombie').style.height=(g.s*58)+'%';
+ $('runner').innerHTML=runnerSVG();$('house').innerHTML=HOUSE;
+ $('scene').classList.toggle('late',S.st>=2);$('stg').textContent=`ด่านที่ ${S.st+1} ${g.name}`;
+ show('game');render();ask()}
+function gap(){return START_GAP+S.right-S.wrong}
+function render(){const g=gap(),zx=68-Math.min(Math.max(g,0),6)*9;
+ $('zombie').style.left=zx+'%';
+ $('house').style.left=(80+Math.min(TOTAL-S.right,12)*4)+'%';
+ $('dash').style.backgroundPositionX=(-S.right*70)+'px';
+ const el=$('gap');el.textContent=`ห่าง ${Math.max(g,0)} ก้าว`;el.classList.toggle('danger',g<=1);
+ $('clr').textContent=`ผ่านแล้ว ${S.cleared}/${STAGES[S.st].qs.length} ข้อ`;
+ $('mr').style.left=Math.min((START_GAP+S.right)/SAFE*100,100)+'%';$('mz').style.left=Math.max(S.wrong/SAFE*100,0)+'%'}
+function ask(){const q=S.queue[0];$('qn').textContent=`เหลือ ${S.queue.length} ข้อในด่านนี้`;$('qp').textContent=q.p?`อ้างอิง หน้า ${q.p}`:'';
+ $('qt').textContent=q.q;$('fb').textContent='';$('fb').style.color='';
+ const o=$('opts');o.innerHTML='';q.o.forEach((t,i)=>{const b=document.createElement('button');b.className='opt';b.innerHTML=`<b>${L[i]}.</b>`;b.append(t);b.onclick=()=>answer(i);o.append(b)});S.lock=false}
+function answer(i){if(S.lock)return;S.lock=true;const q=S.queue[0],ok=i===q.c;
+ [...$('opts').children].forEach((b,k)=>{b.disabled=true;if(k===q.c)b.classList.add('ok');else if(k===i)b.classList.add('no')});
+ const fb=$('fb');
+ if(ok){S.right++;S.cleared++;S.queue.shift();fb.textContent='ถูกต้อง! คุณวิ่งหนีไปได้อีก 1 ก้าว';fb.style.color='var(--ok)'}
+ else{S.wrong++;S.queue.push(prep(S.queue.shift()));fb.textContent='ผิด! ซอมบี้เข้าใกล้ 1 ก้าว ข้อนี้จะวนกลับมาอีก';fb.style.color='var(--bad)';
+  const r=$('runner');r.classList.remove('hit');void r.offsetWidth;r.classList.add('hit')}
+ render();
+ setTimeout(()=>{
+  if(gap()<=0)return end(false);
+  if(!S.queue.length){if(S.st===STAGES.length-1)return end(true);S.st++;return intro()}
+  ask()},1400)}
+function end(win){$('etitle').textContent=win?'ถึงฐานหลบภัยแล้ว คุณรอด!':'ซอมบี้จับคุณได้...';
+ $('edesc').textContent=win?`คุณผ่านครบ 4 ด่าน ตอบผิดไป ${S.wrong} ครั้ง ประตูฐานหลบภัยปิดลงข้างหลังคุณ`:`คุณไปถึงด่านที่ ${S.st+1} (${STAGES[S.st].name}) ทบทวนบทเรียนแล้วกลับมาวิ่งใหม่`;
+ show('end')}
+$('go').onclick=newGame;$('enter').onclick=enter;$('again').onclick=()=>show('home');
+</script>
+</body>
+</html>
